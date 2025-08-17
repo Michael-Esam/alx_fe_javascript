@@ -35,6 +35,28 @@ let quotes = JSON.parse(localStorage.getItem("quotes")) || [
     sessionStorage.setItem("lastViewedQuote", JSON.stringify(filteredQuotes[random]));
   }
   
+  // ✅ Filter Quote Function 
+  function filterQuote() {
+    const selectedCategory = categoryFilter.value;
+    let filteredQuotes = [];
+  
+    if (selectedCategory === "All") {
+      filteredQuotes = quotes;
+    } else {
+      filteredQuotes = quotes.filter((q) => q.category === selectedCategory);
+    }
+  
+    quoteDisplay.innerHTML = ""; //
+  
+    if (filteredQuotes.length > 0) {
+      const randomQuote =
+        filteredQuotes[Math.floor(Math.random() * filteredQuotes.length)];
+      quoteDisplay.textContent = `"${randomQuote.text}" — ${randomQuote.category}`;
+    } else {
+      quoteDisplay.textContent = "No quotes found for this category!";
+    }
+  }
+  
   // Create Add Quote Form
   function createAddQuoteForm() {
     const formDiv = document.createElement("div");
@@ -76,9 +98,9 @@ let quotes = JSON.parse(localStorage.getItem("quotes")) || [
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newQ)
       })
-      .then(res => res.json())
-      .then(data => console.log("Sent to server:", data))
-      .catch(err => console.error("Error sending to server:", err));
+        .then(res => res.json())
+        .then(data => console.log("Sent to server:", data))
+        .catch(err => console.error("Error sending to server:", err));
     }
   }
   
@@ -119,30 +141,33 @@ let quotes = JSON.parse(localStorage.getItem("quotes")) || [
       console.error("Error fetching from server", error);
     }
   }
+  
   // ==================== Sync Quotes with Server ====================
   function syncQuotes() {
     fetch("https://jsonplaceholder.typicode.com/posts")
       .then((response) => response.json())
       .then((serverQuotes) => {
- 
+  
         quotes = serverQuotes.map((item) => ({
           text: item.title,
           category: "Server",
         }));
-        saveQuotes();
+        localStorage.setItem("quotes", JSON.stringify(quotes));
         showRandomQuote();
         console.log("Quotes synced with server!"); // 
       })
       .catch((error) => console.error("Error syncing quotes:", error));
   }
   
-// Run sync automatically every 30 seconds
-setInterval(syncQuotes, 30000);
+  // Run sync automatically every 30 seconds
+  setInterval(syncQuotes, 30000);
   
   // ==================== Init ====================
   newQuoteBtn.addEventListener("click", showRandomQuote);
-  categoryFilter.addEventListener("change", showRandomQuote);
+  categoryFilter.addEventListener("change", filterQuote);
+  
   createAddQuoteForm();
   populateCategories();
   showRandomQuote();
+  
   
