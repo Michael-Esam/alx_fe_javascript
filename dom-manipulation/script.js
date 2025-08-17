@@ -149,6 +149,8 @@ async function syncQuotes() {
       console.error("Error syncing quotes:", error);
     }
   }
+// Run sync automatically every 30 seconds
+setInterval(syncQuotes, 30000);
   
   // ==================== Init ====================
   newQuoteBtn.addEventListener("click", showRandomQuote);
