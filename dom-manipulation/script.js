@@ -120,35 +120,22 @@ let quotes = JSON.parse(localStorage.getItem("quotes")) || [
     }
   }
   // ==================== Sync Quotes with Server ====================
-async function syncQuotes() {
-    try {
-      // send local quotes to server
-      await fetch("https://jsonplaceholder.typicode.com/posts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(quotes)
-      });
-  
-      console.log("Local quotes synced to server!");
-  
-      // get latest quotes from server
-      const response = await fetch("https://jsonplaceholder.typicode.com/posts");
-      const data = await response.json();
-  
-      const serverQuotes = data.slice(0, 5).map(post => ({
-        text: post.title,
-        category: "Server"
-      }));
-  
-      quotes.push(...serverQuotes);
-      localStorage.setItem("quotes", JSON.stringify(quotes));
-      populateCategories();
-  
-      console.log("Quotes fetched and merged from server!");
-    } catch (error) {
-      console.error("Error syncing quotes:", error);
-    }
+  function syncQuotes() {
+    fetch("https://jsonplaceholder.typicode.com/posts")
+      .then((response) => response.json())
+      .then((serverQuotes) => {
+ 
+        quotes = serverQuotes.map((item) => ({
+          text: item.title,
+          category: "Server",
+        }));
+        saveQuotes();
+        showRandomQuote();
+        console.log("Quotes synced with server!"); // 
+      })
+      .catch((error) => console.error("Error syncing quotes:", error));
   }
+  
 // Run sync automatically every 30 seconds
 setInterval(syncQuotes, 30000);
   
