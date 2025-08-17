@@ -1,4 +1,4 @@
-// Array of quotes
+// Quotes array
 let quotes = [
     { text: "The best way to predict the future is to invent it.", category: "Motivation" },
     { text: "Life is what happens when you're busy making other plans.", category: "Life" },
@@ -18,10 +18,12 @@ let quotes = [
     }
     const randomIndex = Math.floor(Math.random() * quotes.length);
     const quote = quotes[randomIndex];
+  
+    // no innerHTML here 👇
     quoteDisplay.textContent = `"${quote.text}" — [${quote.category}]`;
   }
   
-  // Add a new quote dynamically
+  // Add new quote
   function addQuote() {
     const newQuoteText = document.getElementById("newQuoteText").value.trim();
     const newQuoteCategory = document.getElementById("newQuoteCategory").value.trim();
@@ -29,7 +31,7 @@ let quotes = [
     if (newQuoteText && newQuoteCategory) {
       quotes.push({ text: newQuoteText, category: newQuoteCategory });
   
-      // clear inputs
+      // Clear inputs
       document.getElementById("newQuoteText").value = "";
       document.getElementById("newQuoteCategory").value = "";
   
